@@ -10,6 +10,7 @@
  *  on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License
  *  for the specific language governing permissions and limitations under the License.
  *
+ *  18/01/2017 corrected the temperature reading a4refillpad
  */
 
 metadata {
@@ -116,7 +117,7 @@ private Map parseReportAttributeMessage(String description) {
 		resultMap = getBatteryResult(Integer.parseInt(descMap.value, 16))
 	}
     if (descMap.cluster == "0002" && descMap.attrId == "0000") {
-		resultMap = createEvent(name: "temperature", value: zigbee.parseHATemperatureValue("temperature: " + descMap.value, "temperature: ", getTemperatureScale()), unit: getTemperatureScale())
+		resultMap = createEvent(name: "temperature", value: zigbee.parseHATemperatureValue("temperature: " + (convertHexToInt(descMap.value) / 2), "temperature: ", getTemperatureScale()), unit: getTemperatureScale())
 	}
     else if (descMap.cluster == "0008" && descMap.attrId == "0000") {
     	resultMap = createEvent(name: "switch", value: "off")
@@ -157,4 +158,9 @@ private Map parseCustomMessage(String description) {
 	}
     
     return result
+}
+
+
+private Integer convertHexToInt(hex) {
+	Integer.parseInt(hex,16)
 }
